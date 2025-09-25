@@ -4,10 +4,10 @@ export default function SubNavbar() {
   const links = [
     { name: "Home", path: "/" },
     { name: "eSIM Store", path: "/store" },
-    { name: "How Airalo Works", path: "/how-it-works" },
-    { name: "About Airalo", path: "/about" },
-    { name: "Magazine", path: "/magazine" },
-    { name: "Help", path: "/help" },
+    { name: "How Bustammitel Works", path: "/how-it-works" },
+    { name: "Compatibility", path: "/compatibility" },
+     { name: "Our Services", path: "/services" },
+      { name: "About Bustammitel", path: "/about" },
   ];
 
   return (

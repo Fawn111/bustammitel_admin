@@ -25,7 +25,7 @@ const AiraloFeatureSection = () => {
     <div className='bg-[#faf4ef]'>
 <section className="bg-[#86cddb] rounded-3xl p-10 mx-auto max-w-6xl">
       <h2 className="text-4xl md:text-6xl font-extrabold px-8 text-center text-black mb-10">
-        Why do over 20 million people choose Airalo?
+        Why do over 20 million people choose Bustammitel?
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">

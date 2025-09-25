@@ -1,4 +1,5 @@
 import { FaFacebook, FaInstagram, FaTwitter, FaTiktok, FaLinkedin, FaYoutube } from "react-icons/fa";
+import footerImg from '../../assets/brand.png';
 
 export default function Footer() {
   return (
@@ -64,6 +65,9 @@ export default function Footer() {
             <a href="#"><FaYoutube /></a>
           </div>
         </div>
+      </div>
+      <div>
+        <img src={footerImg} alt="" />
       </div>
 
       {/* Bottom bar */}

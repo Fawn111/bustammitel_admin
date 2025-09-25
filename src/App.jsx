@@ -1,10 +1,14 @@
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import SubNavbar from "./components/Navbar-links/Navbar-links";
 import Footer from "./components/Footer/Footer";
-import { Outlet } from "react-router-dom";
 import Hero from "./components/Hero/Hero";
 import AiraloFeatureSection from "./components/AiraloFeature/AiraloFeature";
 import FaqSupportSection from "./components/Supportcard/SupportCard";
+import Video from "./components/VideoSection/Video";
+import Homeplan from "./components/Home-plans/Homeplans";
+import CountryPackages from "./components/PackagesPage/Packagespage";
 
 export default function App() {
   return (
@@ -13,9 +17,27 @@ export default function App() {
       <SubNavbar />
 
       <main className="flex-grow">
-        <Hero />
-        <AiraloFeatureSection />
-        <FaqSupportSection />
+        <Routes>
+          {/* Home page */}
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero />
+                <Homeplan />
+                <AiraloFeatureSection />
+                <Video />
+                <FaqSupportSection />
+              </>
+            }
+          />
+
+          {/* Country packages page */}
+          <Route
+            path="/:countrySlug-esims"
+            element={<CountryPackages />}
+          />
+        </Routes>
       </main>
 
       <Footer />
