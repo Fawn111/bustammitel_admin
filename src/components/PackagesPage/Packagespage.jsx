@@ -28,9 +28,7 @@ useEffect(() => {
 
     try {
       const apiSlug = countrySlug.replace("-esims", "");
-      const response = await fetch(
-    `${API_URL}/packages?type=local&country=${apiSlug}`
-      );
+      const response = await fetch(`${API_URL}/packages?type=local&country=${apiSlug}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -92,7 +90,7 @@ useEffect(() => {
                  <span className="font-bold">Type: </span> <span className="uppercase font-bold text-lg">{operator.plan_type} </span>| Prepaid: {operator.is_prepaid ? "Yes" : "No"}
                 </p>
                 <p className="text-gray-600 mt-1">
-                  Activation Policy: {operator.activation_policy} | KYC: {operator.is_kyc_verify ? "Required" : "Not Required"}
+                  Activation Policy': {operator.activation_policy} | KYC: {operator.is_kyc_verify ? "Required" : "Not Required"}
                 </p>
                 {operator.info?.length > 0 && (
                   <ul className="text-gray-600 list-disc list-inside mt-2 text-sm">
