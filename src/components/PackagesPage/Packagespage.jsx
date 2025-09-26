@@ -8,6 +8,8 @@ const PackagesPage = () => {
   const [loading, setLoading] = useState(false);
   const [modalData, setModalData] = useState(null);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   // Remove duplicate packages visually
   const getUniquePackagesByTitle = (packages) => {
     const seen = new Set();
@@ -19,34 +21,41 @@ const PackagesPage = () => {
     });
   };
 
-  useEffect(() => {
-    const fetchCountryData = async () => {
-      if (!countrySlug) return;
-      setLoading(true);
+useEffect(() => {
+  const fetchCountryData = async () => {
+    if (!countrySlug) return;
+    setLoading(true);
 
-      try {
-        const apiSlug = countrySlug.replace("-esims", "");
-        const res = await axios.get(
-          `http://localhost:4001/packages?type=local&country=${apiSlug}`
-        );
+    try {
+      const apiSlug = countrySlug.replace("-esims", "");
+      const response = await fetch(
+    `${API_URL}/packages?type=local&country=${apiSlug}`
+      );
 
-        const operators = res.data.operators?.map(op => ({
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const operators =
+        data.operators?.map(op => ({
           ...op,
-          packages: getUniquePackagesByTitle(op.packages || [])
+          packages: getUniquePackagesByTitle(op.packages || []),
         })) || [];
 
-        setCountryData({ ...res.data, operators });
+      setCountryData({ ...data, operators });
+    } catch (err) {
+      console.error("Error fetching country data:", err);
+      setCountryData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      } catch (err) {
-        console.error("Error fetching country data:", err);
-        setCountryData(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+  fetchCountryData();
+}, [countrySlug]);
 
-    fetchCountryData();
-  }, [countrySlug]);
 
   if (loading)
     return <div className="text-center mt-10 text-gray-600">Loading...</div>;

@@ -9,13 +9,15 @@ const CountriesTabs = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+const API_URL = import.meta.env.VITE_API_URL;
+
   const fetchCountries = async () => {
     setLoading(true);
     try {
       const url =
         activeTab === "local"
-          ? "http://localhost:4001/countries/local?limit=1000&page=1"
-          : "http://localhost:4001/countries/global?limit=1000&page=1";
+          ? `${API_URL}/countries/local?limit=1000&page=1`
+          : `${API_URL}/countries/global?limit=1000&page=1`;
 
       const res = await axios.get(url);
       const newCountries =
