@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const CountriesTabs = () => {
@@ -9,8 +8,9 @@ const CountriesTabs = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
+  // 🔹 Fetch countries from backend
   const fetchCountries = async () => {
     setLoading(true);
     try {
@@ -19,13 +19,27 @@ const API_URL = import.meta.env.VITE_API_URL;
           ? `${API_URL}/countries/local?limit=1000&page=1`
           : `${API_URL}/countries/global?limit=1000&page=1`;
 
-      const res = await axios.get(url);
-      const newCountries =
-        activeTab === "local" ? res.data.countries : res.data.regions;
+      // get token from localStorage (or context)
+      const token = localStorage.getItem("token");
 
-      setCountries(newCountries);
+      const response = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const newCountries =
+        activeTab === "local" ? data.countries : data.regions;
+
+      setCountries(newCountries || []);
     } catch (err) {
-      console.error("Error fetching countries:", err);
+      console.error("❌ Error fetching countries:", err.message);
     } finally {
       setLoading(false);
     }
@@ -38,10 +52,12 @@ const API_URL = import.meta.env.VITE_API_URL;
 
   const displayedCountries = showAll ? countries : countries.slice(0, 10);
 
- const handleCountryClick = (country) => {
-  const slug = country.slug || country.country_code.toLowerCase();
-  navigate(`/${slug}`);
-};
+  // 🔹 Handle navigation when user clicks a country
+  const handleCountryClick = (country) => {
+    const slug = country.slug || country.country_code.toLowerCase();
+    navigate(`/${slug}-esims`);
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
@@ -72,22 +88,22 @@ const API_URL = import.meta.env.VITE_API_URL;
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {displayedCountries.map((country) => (
-             <div
-  key={country.country_code || country.slug}
-  className="flex items-center gap-4 bg-white p-2 rounded-xl shadow-md hover:shadow-xl cursor-pointer"
-  onClick={() =>
-  navigate(`/${country.slug || country.country_code.toLowerCase()}-esims`)
-}
->
-  {country.imageUrl && (
-    <img
-      src={country.imageUrl}
-      alt={country.title}
-      className="w-12 h-10 object-cover rounded-sm border-2 border-white"
-    />
-  )}
-  <div className="font-medium text-gray-800 text-sm">{country.title}</div>
-</div>
+              <div
+                key={country.country_code || country.slug}
+                className="flex items-center gap-4 bg-white p-2 rounded-xl shadow-md hover:shadow-xl cursor-pointer"
+                onClick={() => handleCountryClick(country)}
+              >
+                {country.imageUrl && (
+                  <img
+                    src={country.imageUrl}
+                    alt={country.title}
+                    className="w-12 h-10 object-cover rounded-sm border-2 border-white"
+                  />
+                )}
+                <div className="font-medium text-gray-800 text-sm">
+                  {country.title}
+                </div>
+              </div>
             ))}
           </div>
 
