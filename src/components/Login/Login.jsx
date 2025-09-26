@@ -13,10 +13,10 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
+       method: "POST",
+        credentials: "include", // ⚠ important
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // ✅ for cookie-based auth
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password })
       });
 
       const data = await res.json();
