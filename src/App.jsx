@@ -9,6 +9,8 @@ import FaqSupportSection from "./components/Supportcard/SupportCard";
 import Video from "./components/VideoSection/Video";
 import Homeplan from "./components/Home-plans/Homeplans";
 import CountryPackages from "./components/PackagesPage/Packagespage";
+import Login from "./components/Login/Login";
+import Register from "./components/Register/Register";
 
 export default function App() {
   return (
@@ -24,7 +26,9 @@ export default function App() {
             element={
               <>
                 <Hero />
-                <Homeplan />
+                <div id="estore">
+        <Homeplan />
+      </div>
                 <AiraloFeatureSection />
                 <Video />
                 <FaqSupportSection />
@@ -33,10 +37,11 @@ export default function App() {
           />
 
           {/* Country packages page */}
-          <Route
-            path="/:countrySlug-esims"
-            element={<CountryPackages />}
-          />
+          <Route path="/:countrySlug" element={<CountryPackages />} />
+
+          {/* Auth pages */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </main>
 

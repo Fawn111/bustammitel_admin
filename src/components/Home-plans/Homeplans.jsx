@@ -38,7 +38,7 @@ const CountriesTabs = () => {
 
  const handleCountryClick = (country) => {
   const slug = country.slug || country.country_code.toLowerCase();
-  navigate(`/airalo/${slug}-esims`);
+  navigate(`/${slug}`);
 };
   return (
     <div className="max-w-7xl mx-auto p-6">
@@ -74,8 +74,8 @@ const CountriesTabs = () => {
   key={country.country_code || country.slug}
   className="flex items-center gap-4 bg-white p-2 rounded-xl shadow-md hover:shadow-xl cursor-pointer"
   onClick={() =>
-    navigate(`/${country.title.toLowerCase().replace(/\s+/g, "-")}-esims`)
-  }
+  navigate(`/${country.slug || country.country_code.toLowerCase()}-esims`)
+}
 >
   {country.imageUrl && (
     <img

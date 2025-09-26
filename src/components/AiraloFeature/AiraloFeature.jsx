@@ -22,7 +22,7 @@ const features = [
 
 const AiraloFeatureSection = () => {
   return (
-    <div className='bg-[#faf4ef]'>
+    <div className='bg-[#faf4ef] pt-20'>
 <section className="bg-[#86cddb] rounded-3xl p-10 mx-auto max-w-6xl">
       <h2 className="text-4xl md:text-6xl font-extrabold px-8 text-center text-black mb-10">
         Why do over 20 million people choose Bustammitel?
