@@ -3,8 +3,8 @@ import footerImg from '../../assets/brand.png';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#faf4ef] text-gray-700 mt-10">
-      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
+    <footer className="bg-[#faf4ef] text-gray-700">
+      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         {/* Column 1 */}
         <div>
           <h3 className="font-semibold text-lg mb-3">Our eSIMs</h3>
@@ -56,18 +56,20 @@ export default function Footer() {
         {/* Column 4 - Social */}
         <div>
           <h3 className="font-semibold text-lg mb-3">Follow us</h3>
-          <div className="flex space-x-4 text-xl">
-            <a href="#"><FaFacebook /></a>
-            <a href="#"><FaInstagram /></a>
-            <a href="#"><FaTwitter /></a>
-            <a href="#"><FaTiktok /></a>
-            <a href="#"><FaLinkedin /></a>
-            <a href="#"><FaYoutube /></a>
+          <div className="flex flex-wrap gap-4 text-2xl">
+            <a href="#" className="hover:text-blue-600"><FaFacebook /></a>
+            <a href="#" className="hover:text-pink-500"><FaInstagram /></a>
+            <a href="#" className="hover:text-blue-400"><FaTwitter /></a>
+            <a href="#" className="hover:text-black"><FaTiktok /></a>
+            <a href="#" className="hover:text-blue-700"><FaLinkedin /></a>
+            <a href="#" className="hover:text-red-600"><FaYoutube /></a>
           </div>
         </div>
       </div>
-      <div>
-        <img src={footerImg} alt="" />
+
+      {/* Footer brand image */}
+      <div className="flex justify-center my-6">
+        <img src={footerImg} alt="Brand Logo" className="h-12 sm:h-42 object-contain" />
       </div>
 
       {/* Bottom bar */}

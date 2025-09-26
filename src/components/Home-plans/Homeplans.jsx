@@ -10,7 +10,6 @@ const CountriesTabs = () => {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // 🔹 Fetch countries from backend
   const fetchCountries = async () => {
     setLoading(true);
     try {
@@ -19,7 +18,6 @@ const CountriesTabs = () => {
           ? `${API_URL}/countries/local?limit=1000&page=1`
           : `${API_URL}/countries/global?limit=1000&page=1`;
 
-      // get token from localStorage (or context)
       const token = localStorage.getItem("token");
 
       const response = await fetch(url, {
@@ -29,17 +27,15 @@ const CountriesTabs = () => {
         },
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
 
       const data = await response.json();
-      const newCountries =
-        activeTab === "local" ? data.countries : data.regions;
+      const newCountries = activeTab === "local" ? data.countries : data.regions;
 
       setCountries(newCountries || []);
     } catch (err) {
       console.error("❌ Error fetching countries:", err.message);
+      setCountries([]);
     } finally {
       setLoading(false);
     }
@@ -52,10 +48,10 @@ const CountriesTabs = () => {
 
   const displayedCountries = showAll ? countries : countries.slice(0, 10);
 
-  // 🔹 Handle navigation when user clicks a country
   const handleCountryClick = (country) => {
     const slug = country.slug || country.country_code.toLowerCase();
-    navigate(`/${slug}-esims`);
+    // Pass the activeTab as query to indicate local or global/regional
+    navigate(`/${slug}-esims?type=${activeTab}`);
   };
 
   return (
