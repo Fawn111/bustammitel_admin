@@ -1,4 +1,4 @@
-import React from "react";
+import {useEffect} from "react";
 import {
   Cpu,
   Headphones,
@@ -13,6 +13,10 @@ Smartphone,
 
 
 const ServicesPage = () => {
+      useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   const services = [
     {
       title: "Next-Gen Upgrades",

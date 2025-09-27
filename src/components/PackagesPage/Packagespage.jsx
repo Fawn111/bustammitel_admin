@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const PackagesPage = () => {
   const { countrySlug } = useParams();
+  const navigate = useNavigate();
   const [countryData, setCountryData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [modalData, setModalData] = useState(null);
@@ -11,6 +13,21 @@ const PackagesPage = () => {
 useEffect(() => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }, [countrySlug]);
+
+const [userName, setUserName] = useState(null);
+
+useEffect(() => {
+  const storedName = localStorage.getItem("userName");
+  if (storedName) setUserName(storedName);
+
+  const handleStorage = () => {
+    setUserName(localStorage.getItem("userName"));
+  };
+
+  window.addEventListener("storage", handleStorage);
+  return () => window.removeEventListener("storage", handleStorage);
+}, []);
+
   const getUniquePackagesByTitle = (packages) => {
     const seen = new Set();
     return packages.filter((pkg) => {
@@ -296,15 +313,32 @@ useEffect(() => {
       </div>
 
       {/* Confirm button */}
-      <button
-        onClick={() => {
-          alert(`You chose to buy: ${modalData.plan.title}`);
-          setModalData(null);
-        }}
-        className="w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition"
-      >
-        Confirm Purchase
-      </button>
+<button
+  onClick={() => {
+    if (!userName) {
+      alert("Please login to confirm your order.");
+      navigate("/login");
+      return;
+    }
+
+    navigate("/order-confirmation", {
+      state: {
+        package: modalData.plan,
+        operator: modalData.operator,
+        country: modalData.countryData,
+      },
+    });
+  }}
+  className={`w-full py-3 font-bold rounded-lg transition ${
+    userName
+      ? "bg-red-600 text-white hover:bg-red-700"
+      : "bg-gray-400 text-gray-700 cursor-not-allowed"
+  }`}
+>
+  {userName ? "Confirm Purchase" : "Login to Confirm"}
+</button>
+
+
     </div>
   </div>
 )}

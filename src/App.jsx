@@ -13,6 +13,7 @@ import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import ServicesPage from "./components/Services/Service";
 import Why from "./components/WhyBusta/Why";
+import Order from "./components/Order/Order";
 
 export default function App() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
           {/* Country packages page */}
           <Route path="/:countrySlug" element={<CountryPackages />} />
             <Route path="/services" element={<ServicesPage />} />
+            <Route path="/order-confirmation" element={<Order />} />
           {/* Auth pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
