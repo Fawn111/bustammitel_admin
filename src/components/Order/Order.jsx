@@ -5,34 +5,36 @@ import { FaBitcoin, FaUniversity, FaCreditCard } from "react-icons/fa";
 const OrderPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { package: pkg, operator, country } = location.state || {};
+  const { package: pkg, operator, region = null, country = null } = location.state || {};
 
   const [paymentMethod, setPaymentMethod] = useState("binance");
   const [coupon, setCoupon] = useState("");
-  const [showPopup, setShowPopup] = useState(false); // popup state
+  const [showPopup, setShowPopup] = useState(false);
 
   if (!pkg || !operator || !country) {
     return <div className="text-center mt-10 text-gray-600">No order details found</div>;
   }
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const applyCoupon = () => {
+    if (!coupon.trim()) return alert("Please enter a coupon code");
     alert(`Coupon "${coupon}" applied!`);
   };
 
-  const API_URL = import.meta.env.VITE_API_URL;
-
   const handlePlaceOrder = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/orders/`, { 
+      const response = await fetch(`${API_URL}/api/orders/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           package: pkg,
           operator: {
             title: operator.title,
-            image: operator.image?.url
+            image: operator.image?.url,
           },
           country: { title: country.title },
+          region: region ? { title: region.title } : null,
           paymentMethod,
           coupon,
         }),
@@ -42,8 +44,6 @@ const OrderPage = () => {
 
       const data = await response.json();
       console.log("Order placed:", data);
-
-      // Show confirmation popup
       setShowPopup(true);
     } catch (err) {
       console.error(err);
@@ -75,9 +75,15 @@ const OrderPage = () => {
         <div className="flex-1 space-y-2">
           <h2 className="text-xl md:text-2xl font-bold text-gray-900">{pkg.title}</h2>
           <p className="text-gray-700">{pkg.short_info || pkg.description}</p>
+
           <div className="flex flex-wrap gap-2 md:gap-3 mt-2">
+            {region && (
+              <span className="bg-gray-100 text-gray-800 px-2 md:px-3 py-1 rounded-full font-semibold text-xs md:text-sm">
+                Region: {region.title}
+              </span>
+            )}
             <span className="bg-gray-100 text-gray-800 px-2 md:px-3 py-1 rounded-full font-semibold text-xs md:text-sm">
-              Coverage: {country.title}
+              Country: {country.title}
             </span>
             <span className="bg-gray-100 text-gray-800 px-2 md:px-3 py-1 rounded-full font-semibold text-xs md:text-sm">
               Data: {pkg.data} GB
@@ -89,6 +95,7 @@ const OrderPage = () => {
               Type: {pkg.type.toUpperCase()}
             </span>
           </div>
+
           <div className="mt-3 flex justify-between items-center">
             <p className="text-lg font-semibold">Price:</p>
             <p className="text-xl font-bold">${pkg.price} USD</p>
@@ -150,7 +157,7 @@ const OrderPage = () => {
 
       <button
         onClick={handlePlaceOrder}
-        className="w-full bg-gradient-to-r py-2 font-bold cursor-pointer from-orange-500 to-orange-400 text-white font-boldpy-4 rounded-2xl hover:from-orange-600 hover:to-orange-500 transition text-lg"
+        className="w-full bg-gradient-to-r py-3 font-bold cursor-pointer from-orange-500 to-orange-400 text-white rounded-2xl hover:from-orange-600 hover:to-orange-500 transition text-lg"
       >
         COMPLETE ORDER
       </button>

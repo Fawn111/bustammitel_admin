@@ -3,20 +3,20 @@ import { useNavigate } from "react-router-dom";
 
 const CountriesTabs = () => {
   const [activeTab, setActiveTab] = useState("local");
-  const [countries, setCountries] = useState([]);
+  const [items, setItems] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const fetchCountries = async () => {
+  const fetchItems = async () => {
     setLoading(true);
     try {
       const url =
         activeTab === "local"
           ? `${API_URL}/countries/local?limit=1000&page=1`
-          : `${API_URL}/countries/global?limit=1000&page=1`;
+          : `${API_URL}/countries/global?limit=1000&page=1`; // assuming global returns regions
 
       const token = localStorage.getItem("token");
 
@@ -30,32 +30,37 @@ const CountriesTabs = () => {
       if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
 
       const data = await response.json();
-      const newCountries = activeTab === "local" ? data.countries : data.regions;
+      const newItems = activeTab === "local" ? data.countries : data.regions;
 
-      setCountries(newCountries || []);
+      setItems(newItems || []);
     } catch (err) {
-      console.error("❌ Error fetching countries:", err.message);
-      setCountries([]);
+      console.error("❌ Error fetching items:", err.message);
+      setItems([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCountries();
+    fetchItems();
     setShowAll(false);
   }, [activeTab]);
 
-  const displayedCountries = showAll ? countries : countries.slice(0, 10);
+  const displayedItems = showAll ? items : items.slice(0, 10);
 
-  const handleCountryClick = (country) => {
-    const slug = country.slug || country.country_code.toLowerCase();
-    navigate(`/${slug}-esims?type=${activeTab}`);
+  const handleItemClick = (item) => {
+    if (activeTab === "local") {
+      const slug = item.slug || item.country_code.toLowerCase();
+      navigate(`/${slug}-esims?type=local`);
+    } else {
+      // Navigate to RegionPackagesPage instead of showing modal
+      const slug = item.slug;
+      navigate(`/region/${slug}`, { state: { type: "global" } });
+    }
   };
 
-  // Skeleton loader
-  const renderSkeletons = () => {
-    return Array.from({ length: 8 }).map((_, idx) => (
+  const renderSkeletons = () =>
+    Array.from({ length: 8 }).map((_, idx) => (
       <div
         key={idx}
         className="flex flex-col items-center justify-center gap-2 bg-white p-4 rounded-2xl shadow-lg animate-pulse"
@@ -64,7 +69,6 @@ const CountriesTabs = () => {
         <div className="h-4 w-16 bg-gray-300 rounded mt-2"></div>
       </div>
     ));
-  };
 
   return (
     <div className="bg-[#faf4ef] py-12">
@@ -85,12 +89,12 @@ const CountriesTabs = () => {
               }`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === "local" ? "Local eSIMs" : "Global eSIMs"}
+              {tab === "local" ? "Local eSIMs" : "Regional eSIMs"}
             </button>
           ))}
         </div>
 
-        {/* Countries Grid */}
+        {/* Grid */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {renderSkeletons()}
@@ -98,37 +102,38 @@ const CountriesTabs = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {displayedCountries.map((country) => (
-                <div
-                  key={country.country_code || country.slug}
-                  className="flex flex-col items-center justify-center gap-2 bg-white p-4 rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition cursor-pointer"
-                  onClick={() => handleCountryClick(country)}
-                >
-                  {country.imageUrl ? (
-                    <img
-                      src={country.imageUrl}
-                      alt={country.title}
-                      className="w-20 h-20 object-cover rounded-full border-2 border-orange-400 shadow-md"
-                    />
-                  ) : (
-                    <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center">
-                      <span className="text-gray-500 font-bold text-xl">{country.title[0]}</span>
-                    </div>
-                  )}
-                  <div className="text-center font-semibold text-gray-900 text-sm sm:text-base mt-2">
-                    {country.title}
-                  </div>
-                </div>
+              {displayedItems.map((item) => (
+              <div
+  key={item.country_code || item.slug}
+  className="flex flex-col items-center justify-center gap-2 bg-white p-4 rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition cursor-pointer"
+  onClick={() => handleItemClick(item)}
+>
+  {item.image?.url || item.imageUrl ? (
+    <img
+      src={item.image?.url || item.imageUrl}
+      alt={item.title}
+      className="w-20 h-20 object-cover rounded-full border-2 border-orange-400 shadow-md"
+    />
+  ) : (
+    <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center">
+      <span className="text-gray-500 font-bold text-xl">{item.title[0]}</span>
+    </div>
+  )}
+  <div className="text-center font-semibold text-gray-900 text-sm sm:text-base mt-2">
+    {item.title}
+  </div>
+</div>
+
               ))}
             </div>
 
-            {!showAll && countries.length > 10 && (
+            {!showAll && items.length > 10 && (
               <div className="flex justify-center mt-10">
                 <button
                   onClick={() => setShowAll(true)}
                   className="bg-orange-500 text-white px-6 py-3 rounded-full hover:bg-orange-600 shadow-lg transition font-semibold"
                 >
-                  Show All Countries
+                  Show All
                 </button>
               </div>
             )}

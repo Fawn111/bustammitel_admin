@@ -1,32 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 const PackagesPage = () => {
   const { countrySlug } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const type = location.state?.type || "local"; // local or global
   const [countryData, setCountryData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [modalData, setModalData] = useState(null);
+  const [userName, setUserName] = useState(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
-useEffect(() => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}, [countrySlug]);
 
-const [userName, setUserName] = useState(null);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [countrySlug]);
 
-useEffect(() => {
-  const storedName = localStorage.getItem("userName");
-  if (storedName) setUserName(storedName);
+  useEffect(() => {
+    const storedName = localStorage.getItem("userName");
+    if (storedName) setUserName(storedName);
 
-  const handleStorage = () => {
-    setUserName(localStorage.getItem("userName"));
-  };
-
-  window.addEventListener("storage", handleStorage);
-  return () => window.removeEventListener("storage", handleStorage);
-}, []);
+    const handleStorage = () => setUserName(localStorage.getItem("userName"));
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   const getUniquePackagesByTitle = (packages) => {
     const seen = new Set();
@@ -45,15 +44,18 @@ useEffect(() => {
       try {
         const apiSlug = countrySlug.replace("-esims", "");
         const response = await fetch(
-          `${API_URL}/packages?type=local&country=${apiSlug}`
+          `${API_URL}/packages?type=${type}&country=${apiSlug}`
         );
+
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
+
         const operators =
           data.operators?.map((op) => ({
             ...op,
             packages: getUniquePackagesByTitle(op.packages || []),
           })) || [];
+
         setCountryData({ ...data, operators });
       } catch (err) {
         console.error("Error fetching country data:", err);
@@ -62,9 +64,11 @@ useEffect(() => {
         setLoading(false);
       }
     };
-    fetchCountryData();
-  }, [countrySlug]);
 
+    fetchCountryData();
+  }, [countrySlug, type]);
+
+  // Render skeletons
   const renderSkeletons = () =>
     Array.from({ length: 6 }).map((_, idx) => (
       <div
@@ -119,7 +123,7 @@ useEffect(() => {
                   | Prepaid: {operator.is_prepaid ? "Yes" : "No"}
                 </p>
                 <p className="text-gray-600 mt-1">
-                  Activation Policy: {operator.activation_policy} | KYC:{" "}
+                  Activation: {operator.activation_policy} | KYC:{" "}
                   {operator.is_kyc_verify ? "Required" : "Not Required"}
                 </p>
                 {operator.info?.length > 0 && (
@@ -165,10 +169,13 @@ useEffect(() => {
                 {pkg.short_info && (
                   <p className="text-white/80 italic text-sm mb-3">{pkg.short_info}</p>
                 )}
-                <button className="w-full py-2 rounded-lg font-bold hover:shadow-lg transition" style={{
-                  background: operator.gradient_end,
-                  color: "white",
-                }}>
+                <button
+                  className="w-full py-2 rounded-lg font-bold hover:shadow-lg transition"
+                  style={{
+                    background: operator.gradient_end,
+                    color: "white",
+                  }}
+                >
                   Buy Now
                 </button>
               </div>
@@ -177,7 +184,6 @@ useEffect(() => {
         </div>
       ))}
 
-      {/* Modal */}
       {/* Modal */}
 {modalData && (
   <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-start z-50 p-4 overflow-auto">
