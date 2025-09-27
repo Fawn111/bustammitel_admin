@@ -47,49 +47,49 @@ export default function Register() {
         </p>
 
         {/* Full Name */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-1 sm:mb-2">
-            Full Name
-          </label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Enter your full name"
-            className="w-full p-3 sm:p-3.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-            onChange={handleChange}
-            required
-          />
-        </div>
+<div className="mb-4">
+  <label className="block text-gray-700 font-medium mb-1 sm:mb-2">
+    Full Name
+  </label>
+  <input
+    type="text"
+    name="name"
+    placeholder="Enter your full name"
+    className="w-full p-3 sm:p-3.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+    onChange={handleChange}
+    required
+  />
+</div>
 
-        {/* Email */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-1 sm:mb-2">
-            Email Address
-          </label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            className="w-full p-3 sm:p-3.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-            onChange={handleChange}
-            required
-          />
-        </div>
+{/* Email */}
+<div className="mb-4">
+  <label className="block text-gray-700 font-medium mb-1 sm:mb-2">
+    Email Address
+  </label>
+  <input
+    type="email"
+    name="email"
+    placeholder="Enter your email"
+    className="w-full p-3 sm:p-3.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+    onChange={handleChange}
+    required
+  />
+</div>
 
-        {/* Password */}
-        <div className="mb-6">
-          <label className="block text-gray-700 font-medium mb-1 sm:mb-2">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            placeholder="••••••••"
-            className="w-full p-3 sm:p-3.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-            onChange={handleChange}
-            required
-          />
-        </div>
+{/* Password */}
+<div className="mb-6">
+  <label className="block text-gray-700 font-medium mb-1 sm:mb-2">
+    Password
+  </label>
+  <input
+    type="password"
+    name="password"
+    placeholder="••••••••"
+    className="w-full p-3 sm:p-3.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+    onChange={handleChange}
+    required
+  />
+</div>
 
         {/* Submit */}
         <button

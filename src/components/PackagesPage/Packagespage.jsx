@@ -186,7 +186,7 @@ useEffect(() => {
       {/* Close */}
       <button
         onClick={() => setModalData(null)}
-        className="absolute top-4 right-4 text-gray-500 hover:text-red-600 text-2xl font-bold"
+        className="absolute top-4 right-4 text-gray-500 hover:text-red-600 cursor-pointer text-2xl font-bold"
       >
         &times;
       </button>
@@ -212,7 +212,7 @@ useEffect(() => {
           <div
             key={pkg.id}
             className={`flex-shrink-0 w-56 p-4 rounded-xl cursor-pointer transform transition duration-300 hover:scale-105 shadow-lg ${
-              modalData.plan.id === pkg.id ? "border-2 border-red-600 bg-red-50" : "border border-gray-300 bg-white"
+              modalData.plan.id === pkg.id ? "border-2 border-orange-600 bg-red-50" : "border border-gray-300 bg-white"
             }`}
             onClick={() => setModalData(prev => ({ ...prev, plan: pkg }))}
           >
@@ -225,7 +225,7 @@ useEffect(() => {
               name={`modal-package-${modalData.operator.id}`}
               checked={modalData.plan.id === pkg.id}
               onChange={() => setModalData(prev => ({ ...prev, plan: pkg }))}
-              className="accent-red-500 mt-1"
+              className="accent-orange-500 mt-1"
             />
           </div>
         ))}
@@ -331,8 +331,8 @@ useEffect(() => {
   }}
   className={`w-full py-3 font-bold rounded-lg transition ${
     userName
-      ? "bg-red-600 text-white hover:bg-red-700"
-      : "bg-gray-400 text-gray-700 cursor-not-allowed"
+      ? "bg-orange-600 text-white hover:bg-orange-700 cursor-pointer"
+      : "bg-red-400 text-gray-700 cursor-not-allowed"
   }`}
 >
   {userName ? "Confirm Purchase" : "Login to Confirm"}

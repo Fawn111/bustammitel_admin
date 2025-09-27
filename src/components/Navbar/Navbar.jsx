@@ -118,14 +118,14 @@ export default function Navbar() {
               </span>
               <Link
                 to="/my-esims"
-                className="block px-3 py-2 bg-blue-500 text-white rounded-full text-sm font-medium hover:bg-blue-600 transition"
+                className="block px-3 py-2 bg-orange-500 text-white rounded-full text-sm font-medium hover:bg-blue-600 transition"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 My eSIMs
               </Link>
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-3 py-2 bg-red-500 text-white rounded-full text-sm font-medium hover:bg-red-600 transition"
+                className="w-full text-left px-3 py-2 bg-orange-500 text-white rounded-full text-sm font-medium hover:bg-orange-600 transition"
               >
                 Logout
               </button>
