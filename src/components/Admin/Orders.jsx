@@ -7,9 +7,11 @@ export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [qrTexts, setQrTexts] = useState({}); // store qr text per order
 
+   const API_URL = import.meta.env.VITE_API_URL;
+
   const fetchOrders = async () => {
     try {
-      const res = await axios.get("http://localhost:4001/orders");
+      const res = await axios.get(`${API_URL}/orders`);
       setOrders(res.data);
     } catch (err) {
       console.error("Error fetching orders:", err.message);
@@ -30,7 +32,7 @@ export default function Orders() {
   if (!qrText || !qrText.trim()) return alert("Please enter text for QR code");
 
   try {
-    await axios.put(`http://localhost:4001/orders/${orderId}/qr`, {
+    await axios.put(`${API_URL}/orders/${orderId}/qr`, {
       qrText, // ✅ just send text
     });
     alert("QR code generated successfully!");
