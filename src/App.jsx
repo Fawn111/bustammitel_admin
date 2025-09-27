@@ -11,6 +11,8 @@ import Homeplan from "./components/Home-plans/Homeplans";
 import CountryPackages from "./components/PackagesPage/Packagespage";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
+import ServicesPage from "./components/Services/Service";
+import Why from "./components/WhyBusta/Why";
 
 export default function App() {
   return (
@@ -30,6 +32,9 @@ export default function App() {
         <Homeplan />
       </div>
                 <AiraloFeatureSection />
+                <div id="why-bustammitel">
+  <Why />
+</div>
                 <Video />
                 <FaqSupportSection />
               </>
@@ -38,7 +43,7 @@ export default function App() {
 
           {/* Country packages page */}
           <Route path="/:countrySlug" element={<CountryPackages />} />
-
+            <Route path="/services" element={<ServicesPage />} />
           {/* Auth pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

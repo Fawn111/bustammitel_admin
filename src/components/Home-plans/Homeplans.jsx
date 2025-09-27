@@ -50,71 +50,91 @@ const CountriesTabs = () => {
 
   const handleCountryClick = (country) => {
     const slug = country.slug || country.country_code.toLowerCase();
-    // Pass the activeTab as query to indicate local or global/regional
     navigate(`/${slug}-esims?type=${activeTab}`);
   };
 
-  return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
-        Explore eSIMs
-      </h1>
-
-      {/* Tabs */}
-      <div className="flex justify-center space-x-6 border-b-2 border-gray-300 mb-8">
-        {["local", "global"].map((tab) => (
-          <button
-            key={tab}
-            className={`text-sm font-semibold pb-2 transition-all duration-300 cursor-pointer ${
-              activeTab === tab
-                ? "border-b-4 border-orange-500 text-gray-800"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab === "local" ? "Local eSIMs" : "Global eSIMs"}
-          </button>
-        ))}
+  // Skeleton loader
+  const renderSkeletons = () => {
+    return Array.from({ length: 8 }).map((_, idx) => (
+      <div
+        key={idx}
+        className="flex flex-col items-center justify-center gap-2 bg-white p-4 rounded-2xl shadow-lg animate-pulse"
+      >
+        <div className="w-20 h-20 bg-gray-200 rounded-full"></div>
+        <div className="h-4 w-16 bg-gray-300 rounded mt-2"></div>
       </div>
+    ));
+  };
 
-      {/* Countries Grid */}
-      {loading ? (
-        <div className="text-center text-gray-500 font-medium">Loading...</div>
-      ) : (
-        <>
+  return (
+    <div className="bg-[#faf4ef] py-12">
+      <div className="max-w-7xl mx-auto px-6">
+        <h1 className="text-4xl sm:text-5xl font-extrabold mb-10 text-center text-gray-900">
+          Explore eSIMs
+        </h1>
+
+        {/* Tabs */}
+        <div className="flex justify-center space-x-6 mb-10">
+          {["local", "global"].map((tab) => (
+            <button
+              key={tab}
+              className={`text-lg font-semibold pb-2 transition-all duration-300 cursor-pointer ${
+                activeTab === tab
+                  ? "border-b-4 border-orange-500 text-gray-900"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab === "local" ? "Local eSIMs" : "Global eSIMs"}
+            </button>
+          ))}
+        </div>
+
+        {/* Countries Grid */}
+        {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {displayedCountries.map((country) => (
-              <div
-                key={country.country_code || country.slug}
-                className="flex items-center gap-4 bg-white p-2 rounded-xl shadow-md hover:shadow-xl cursor-pointer"
-                onClick={() => handleCountryClick(country)}
-              >
-                {country.imageUrl && (
-                  <img
-                    src={country.imageUrl}
-                    alt={country.title}
-                    className="w-12 h-10 object-cover rounded-sm border-2 border-white"
-                  />
-                )}
-                <div className="font-medium text-gray-800 text-sm">
-                  {country.title}
-                </div>
-              </div>
-            ))}
+            {renderSkeletons()}
           </div>
-
-          {!showAll && countries.length > 10 && (
-            <div className="flex justify-center mt-6">
-              <button
-                onClick={() => setShowAll(true)}
-                className="bg-orange-500 text-white px-6 py-2 rounded-full hover:drop-shadow-xl cursor-pointer transition"
-              >
-                Show All Countries
-              </button>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {displayedCountries.map((country) => (
+                <div
+                  key={country.country_code || country.slug}
+                  className="flex flex-col items-center justify-center gap-2 bg-white p-4 rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition cursor-pointer"
+                  onClick={() => handleCountryClick(country)}
+                >
+                  {country.imageUrl ? (
+                    <img
+                      src={country.imageUrl}
+                      alt={country.title}
+                      className="w-20 h-20 object-cover rounded-full border-2 border-orange-400 shadow-md"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span className="text-gray-500 font-bold text-xl">{country.title[0]}</span>
+                    </div>
+                  )}
+                  <div className="text-center font-semibold text-gray-900 text-sm sm:text-base mt-2">
+                    {country.title}
+                  </div>
+                </div>
+              ))}
             </div>
-          )}
-        </>
-      )}
+
+            {!showAll && countries.length > 10 && (
+              <div className="flex justify-center mt-10">
+                <button
+                  onClick={() => setShowAll(true)}
+                  className="bg-orange-500 text-white px-6 py-3 rounded-full hover:bg-orange-600 shadow-lg transition font-semibold"
+                >
+                  Show All Countries
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

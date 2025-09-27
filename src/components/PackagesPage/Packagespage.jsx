@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 
 const PackagesPage = () => {
   const { countrySlug } = useParams();
@@ -9,11 +8,12 @@ const PackagesPage = () => {
   const [modalData, setModalData] = useState(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
-
-  // Remove duplicate packages visually
+useEffect(() => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}, [countrySlug]);
   const getUniquePackagesByTitle = (packages) => {
     const seen = new Set();
-    return packages.filter(pkg => {
+    return packages.filter((pkg) => {
       const key = `${pkg.title}-${pkg.price}-${pkg.data}-${pkg.day}`;
       if (seen.has(key)) return false;
       seen.add(key);
@@ -21,76 +21,89 @@ const PackagesPage = () => {
     });
   };
 
-useEffect(() => {
-  const fetchCountryData = async () => {
-    if (!countrySlug) return;
-    setLoading(true);
-
-    try {
-      const apiSlug = countrySlug.replace("-esims", "");
-      const response = await fetch(`${API_URL}/packages?type=local&country=${apiSlug}`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+  useEffect(() => {
+    const fetchCountryData = async () => {
+      if (!countrySlug) return;
+      setLoading(true);
+      try {
+        const apiSlug = countrySlug.replace("-esims", "");
+        const response = await fetch(
+          `${API_URL}/packages?type=local&country=${apiSlug}`
+        );
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+        const operators =
+          data.operators?.map((op) => ({
+            ...op,
+            packages: getUniquePackagesByTitle(op.packages || []),
+          })) || [];
+        setCountryData({ ...data, operators });
+      } catch (err) {
+        console.error("Error fetching country data:", err);
+        setCountryData(null);
+      } finally {
+        setLoading(false);
       }
+    };
+    fetchCountryData();
+  }, [countrySlug]);
 
-      const data = await response.json();
-
-      const operators =
-        data.operators?.map(op => ({
-          ...op,
-          packages: getUniquePackagesByTitle(op.packages || []),
-        })) || [];
-
-      setCountryData({ ...data, operators });
-    } catch (err) {
-      console.error("Error fetching country data:", err);
-      setCountryData(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchCountryData();
-}, [countrySlug]);
-
+  const renderSkeletons = () =>
+    Array.from({ length: 6 }).map((_, idx) => (
+      <div
+        key={idx}
+        className="flex-shrink-0 w-64 h-64 rounded-2xl p-6 bg-gray-200 animate-pulse"
+      ></div>
+    ));
 
   if (loading)
-    return <div className="text-center mt-10 text-gray-600">Loading...</div>;
+    return (
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="flex flex-wrap gap-6 justify-center">{renderSkeletons()}</div>
+      </div>
+    );
+
   if (!countryData)
     return <div className="text-center mt-10 text-gray-600">No data available</div>;
 
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Country Header */}
-      <div className="flex items-center mb-12">
+      <div className="flex flex-col md:flex-row items-center mb-12 gap-6">
         {countryData.image?.url && (
           <img
             src={countryData.image.url}
             alt={countryData.title}
-            className="w-64 h-42 object-cover rounded-lg mr-6 border-4 border-gray-200 shadow-md"
+            className="w-full md:w-64 h-48 md:h-42 object-cover rounded-lg border-4 border-gray-200 shadow-lg"
           />
         )}
-        <h1 className="text-5xl font-extrabold text-gray-900">{countryData.title}</h1>
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 text-center md:text-left">
+          {countryData.title}
+        </h1>
       </div>
 
       {/* Operators and Packages */}
-      {countryData.operators.map(operator => (
+      {countryData.operators.map((operator) => (
         <div key={operator.id} className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-6">
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-between mb-6 gap-6">
+            <div className="flex items-center space-x-6 flex-1">
               <img
                 src={operator.image?.url}
                 alt={operator.title}
-                className="w-44 h-44 object-contain rounded-xl "
+                className="w-32 h-32 md:w-44 md:h-44 object-contain rounded-xl shadow-lg"
               />
               <div>
-                <h2 className="text-3xl font-bold text-gray-900">{operator.title}</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                  {operator.title}
+                </h2>
                 <p className="text-gray-600 mt-2">
-                 <span className="font-bold">Type: </span> <span className="uppercase font-bold text-lg">{operator.plan_type} </span>| Prepaid: {operator.is_prepaid ? "Yes" : "No"}
+                  <span className="font-bold">Type: </span>
+                  <span className="uppercase font-bold text-lg">{operator.plan_type}</span>{" "}
+                  | Prepaid: {operator.is_prepaid ? "Yes" : "No"}
                 </p>
                 <p className="text-gray-600 mt-1">
-                  Activation Policy': {operator.activation_policy} | KYC: {operator.is_kyc_verify ? "Required" : "Not Required"}
+                  Activation Policy: {operator.activation_policy} | KYC:{" "}
+                  {operator.is_kyc_verify ? "Required" : "Not Required"}
                 </p>
                 {operator.info?.length > 0 && (
                   <ul className="text-gray-600 list-disc list-inside mt-2 text-sm">
@@ -103,8 +116,9 @@ useEffect(() => {
             </div>
           </div>
 
-          <div className="flex space-x-6 overflow-x-auto py-4">
-            {operator.packages.map(pkg => (
+          {/* Packages */}
+          <div className="flex space-x-6 overflow-x-auto py-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+            {operator.packages.map((pkg) => (
               <div
                 key={pkg.id}
                 className="flex-shrink-0 w-64 rounded-2xl p-6 cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-2xl"
@@ -112,7 +126,7 @@ useEffect(() => {
                   background: `linear-gradient(135deg, ${
                     operator.gradient_start || "#4f46e5"
                   }, ${operator.gradient_end || "#6366f1"})`,
-                  color: "white"
+                  color: "white",
                 }}
                 onClick={() => setModalData({ operator, plan: pkg, countryData })}
               >
@@ -134,15 +148,9 @@ useEffect(() => {
                 {pkg.short_info && (
                   <p className="text-white/80 italic text-sm mb-3">{pkg.short_info}</p>
                 )}
-                {operator.coverages?.length > 0 && (
-                  <p className="text-white/70 text-xs mb-3">
-                    Networks: {operator.coverages.map(c => c.networks.map(n => n.name).join(", ")).join("; ")}
-                  </p>
-                )}
-                <button className='w-full cursor-pointer bg-white shadow-2xs text-white font-bold py-2 rounded-lg hover:bg-blue-100 transition' style={{
-                  background: 
-                    operator.gradient_start,
-                  color: "white"
+                <button className="w-full py-2 rounded-lg font-bold hover:shadow-lg transition" style={{
+                  background: operator.gradient_end,
+                  color: "white",
                 }}>
                   Buy Now
                 </button>
@@ -151,11 +159,14 @@ useEffect(() => {
           </div>
         </div>
       ))}
-{modalData && (
-  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50 px-4 py-8">
-    <div className="bg-white rounded-2xl max-w-5xl w-full p-6 relative shadow-2xl overflow-auto">
 
-      {/* Close button */}
+      {/* Modal */}
+      {/* Modal */}
+{modalData && (
+  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-start z-50 p-4 overflow-auto">
+    <div className="bg-white rounded-2xl max-w-5xl w-full p-6 relative shadow-2xl">
+
+      {/* Close */}
       <button
         onClick={() => setModalData(null)}
         className="absolute top-4 right-4 text-gray-500 hover:text-red-600 text-2xl font-bold"
@@ -164,27 +175,26 @@ useEffect(() => {
       </button>
 
       {/* Operator Header */}
-      <div className="flex items-center space-x-6 mb-6">
+      <div className="flex flex-col md:flex-row items-center md:items-start mb-6 gap-4">
         <img
           src={modalData.operator.image?.url}
           alt={modalData.operator.title}
-          className="w-32 h-32 object-contain rounded-lg"
+          className="w-32 h-32 md:w-44 md:h-44 object-contain rounded-lg shadow-md"
         />
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">{modalData.operator.title}</h2>
-          <p className="text-sm text-gray-600 mt-1">
-            {modalData.operator.plan_type} | Activation: {modalData.operator.activation_policy} | KYC:{" "}
-            {modalData.operator.is_kyc_verify ? "Yes" : "No"}
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{modalData.operator.title}</h2>
+          <p className="text-gray-600 mt-2">
+            Type: {modalData.operator.plan_type} | Activation: {modalData.operator.activation_policy} | KYC: {modalData.operator.is_kyc_verify ? "Required" : "Not Required"}
           </p>
         </div>
       </div>
 
       {/* Horizontal scrollable package cards */}
-      <div className="flex space-x-4 overflow-x-auto py-2 mb-6">
-        {modalData.operator.packages.map(pkg => (
+      <div className="flex space-x-4 overflow-x-auto py-4 mb-6 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+        {modalData.operator.packages.map((pkg) => (
           <div
             key={pkg.id}
-            className={`flex-shrink-0 w-56 p-4 rounded-lg cursor-pointer transition-transform transform hover:scale-105 shadow-lg ${
+            className={`flex-shrink-0 w-56 p-4 rounded-xl cursor-pointer transform transition duration-300 hover:scale-105 shadow-lg ${
               modalData.plan.id === pkg.id ? "border-2 border-red-600 bg-red-50" : "border border-gray-300 bg-white"
             }`}
             onClick={() => setModalData(prev => ({ ...prev, plan: pkg }))}
@@ -210,9 +220,7 @@ useEffect(() => {
         {/* Left: Description + Coverage + Supported Country + Total Price */}
         <div className="md:w-1/2 bg-gray-50 p-4 rounded-xl shadow-md text-sm">
           <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
-          <p className="text-gray-700">
-            {modalData.operator.other_info || "No description available."}
-          </p>
+          <p className="text-gray-700">{modalData.operator.other_info || "No description available."}</p>
 
           {/* Supported Country */}
           <div className="mt-4">
@@ -262,7 +270,7 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Right: Plan Details */}
+        {/* Right: Plan Details with gradient */}
         <div className="md:w-1/2 p-4 rounded-xl shadow-md text-sm" style={{ background: `linear-gradient(135deg, ${modalData.operator.gradient_start}, ${modalData.operator.gradient_end})`, color: "white" }}>
           <h3 className="font-semibold text-white mb-2">Plan Details</h3>
           <div className="flex justify-between mb-1">
@@ -276,14 +284,6 @@ useEffect(() => {
           <div className="flex justify-between mb-1">
             <span className="font-semibold">KYC:</span>
             <span>{modalData.operator.is_kyc_verify ? "Required" : "Not Required"}</span>
-          </div>
-          <div className="flex justify-between mb-1">
-            <span className="font-semibold">Install Window:</span>
-            <span>{modalData.operator.install_window_days} days</span>
-          </div>
-          <div className="flex justify-between mb-1">
-            <span className="font-semibold">Top-up Grace Window:</span>
-            <span>{modalData.operator.topup_grace_window_days} days</span>
           </div>
           <div className="flex justify-between mb-1">
             <span className="font-semibold">Validity:</span>
@@ -301,15 +301,13 @@ useEffect(() => {
           alert(`You chose to buy: ${modalData.plan.title}`);
           setModalData(null);
         }}
-        className="w-full bg-red-600 text-white font-bold cursor-pointer py-3 rounded-lg hover:bg-red-700 transition text-md"
+        className="w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition"
       >
         Confirm Purchase
       </button>
     </div>
   </div>
 )}
-
-
 
     </div>
   );
