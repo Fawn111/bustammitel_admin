@@ -162,7 +162,6 @@ const Coupon = () => {
         ))}
       </div>
 
-      {/* Modal for Add/Edit */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50 p-4">
           <motion.div

@@ -12,7 +12,6 @@ const Topbar = () => {
       </h1>
 
       <div className="relative flex items-center gap-3 text-white cursor-pointer select-none">
-        {/* Profile */}
         <div
           className="flex items-center gap-2 group"
           onClick={() => setDropdownOpen((prev) => !prev)}
@@ -27,7 +26,6 @@ const Topbar = () => {
           </motion.div>
         </div>
 
-        {/* Dropdown */}
         <AnimatePresence>
           {dropdownOpen && (
             <motion.ul

@@ -11,7 +11,6 @@ const User = () => {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch users
   useEffect(() => {
     fetch(`${API_URL}/auth/`)
       .then((res) => res.json())
@@ -57,7 +56,6 @@ const User = () => {
 
   if (loading) return <p className="p-6 text-gray-500">Loading users...</p>;
 
-  // Filter users based on search term
   const filteredUsers = users.filter(
     (user) =>
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -68,7 +66,6 @@ const User = () => {
     <div className="p-6">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">👥 User Management</h1>
 
-      {/* Search Bar */}
       <div className="mb-6 flex items-center gap-3 max-w-md">
         <FaSearch className="text-gray-400" />
         <input

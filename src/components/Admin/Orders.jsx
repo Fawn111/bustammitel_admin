@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
-  const [qrTexts, setQrTexts] = useState({}); // store qr text per order
+  const [qrTexts, setQrTexts] = useState({}); 
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -49,7 +49,6 @@ export default function Orders() {
         All Orders
       </h2>
 
-      {/* Toast Notifications */}
       <ToastContainer position="top-right" autoClose={3000} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -62,7 +61,7 @@ export default function Orders() {
             transition={{ type: "spring", stiffness: 150 }}
             className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 p-5 flex flex-col justify-between border border-gray-200"
           >
-            {/* User Info */}
+
             <div>
               <h3 className="font-bold text-xl text-gray-800">{order.username}</h3>
               <p className="text-sm text-gray-500">Order ID: {order._id}</p>
@@ -82,7 +81,6 @@ export default function Orders() {
               </div>
             </div>
 
-            {/* Package Info */}
             <div className="mt-4">
               <h4 className="font-semibold text-gray-700 mb-1">Package:</h4>
               <p className="text-gray-600">
@@ -97,7 +95,6 @@ export default function Orders() {
               </p>
             </div>
 
-            {/* Operator & Country */}
             <div className="mt-4 flex items-center gap-3">
               {order.operator?.image && (
                 <img
@@ -115,7 +112,6 @@ export default function Orders() {
               </div>
             </div>
 
-            {/* Payment & Coupon */}
             <div className="mt-4 text-gray-600 text-sm">
               <p>
                 <span className="font-semibold">Payment:</span> {order.paymentMethod}
@@ -127,7 +123,6 @@ export default function Orders() {
               )}
             </div>
 
-            {/* QR Code Text Input */}
             {order.status === "Pending" && (
               <div className="mt-4 flex flex-col gap-2">
                 <input
@@ -146,7 +141,6 @@ export default function Orders() {
               </div>
             )}
 
-            {/* Display QR Code */}
             {order.qrCode && (
               <div className="mt-4 flex justify-center">
                 <img

@@ -54,7 +54,6 @@ const Sidebar = ({ setAuthenticated }) => {
       animate={collapsed ? "collapsed" : "expanded"}
       className="h-screen bg-gradient-to-b from-orange-900 via-orange-800 to-orange-700 text-white flex flex-col shadow-2xl transition-all duration-300 relative"
     >
-      {/* Collapse button */}
       <button
         onClick={() => setCollapsed(!collapsed)}
         className="absolute top-4 -right-3 w-7 h-7 bg-orange-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-orange-600 transition"
@@ -67,7 +66,6 @@ const Sidebar = ({ setAuthenticated }) => {
         </motion.div>
       </button>
 
-      {/* Admin profile */}
       <div className={`flex flex-col items-center justify-center py-6 border-b border-orange-900 transition-all duration-300 ${collapsed ? "opacity-0 h-0" : "opacity-100"}`}>
         <img
           src={logo}
@@ -78,7 +76,6 @@ const Sidebar = ({ setAuthenticated }) => {
         <p className="text-sm text-orange-200">System Manager</p>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 px-2 py-4 space-y-3 font-semibold text-lg">
         {navItems.map((item) => (
           <motion.div
@@ -101,14 +98,13 @@ const Sidebar = ({ setAuthenticated }) => {
         ))}
       </nav>
 
-      {/* Logout */}
       <div className={`px-4 py-5 border-t border-orange-700 transition-all duration-300 ${collapsed ? "opacity-0 h-0" : "opacity-100"}`}>
         <motion.button
           whileHover={{ scale: 1.05 }}
           onClick={handleLogout}
           className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-3 rounded-xl shadow-lg hover:opacity-90 transition"
         >
-          🚪 Logout
+         Logout
         </motion.button>
       </div>
     </motion.div>
