@@ -31,12 +31,14 @@ const Dashboard = () => {
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">
           Dashboard Overview
         </h1>
-        <p className="text-gray-600 mt-2 text-sm sm:text-base md:text-lg">Welcome back, Admin 👋</p>
+        <p className="text-gray-600 mt-2 text-sm sm:text-base md:text-lg">
+          Welcome back, Admin 👋
+        </p>
       </div>
 
       {/* Stats Section */}
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
@@ -49,12 +51,19 @@ const Dashboard = () => {
             whileHover={{ scale: 1.05 }}
             className="flex items-center gap-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 sm:p-6 md:p-6 rounded-2xl shadow-lg cursor-pointer"
           >
-            <div className="bg-white/20 p-3 sm:p-4 rounded-full flex items-center justify-center">
+            {/* Icon */}
+            <div className="bg-white/20 p-3 sm:p-4 rounded-full flex items-center justify-center shrink-0">
               {stat.icon}
             </div>
-            <div className="flex flex-col">
-              <h3 className="text-sm sm:text-base md:text-lg font-semibold">{stat.title}</h3>
-              <p className="text-lg sm:text-xl md:text-2xl font-bold">{stat.value}</p>
+
+            {/* Text */}
+            <div className="flex flex-col flex-1 min-w-0">
+              <h3 className="text-xs sm:text-sm md:text-lg font-semibold truncate">
+                {stat.title}
+              </h3>
+              <p className="text-base sm:text-xl md:text-2xl font-bold break-words">
+                {stat.value}
+              </p>
             </div>
           </motion.div>
         ))}
@@ -62,7 +71,9 @@ const Dashboard = () => {
 
       {/* Placeholder for Charts */}
       <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
-        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-orange-600 mb-4">Analytics</h2>
+        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-orange-600 mb-4">
+          Analytics
+        </h2>
         <div className="h-48 sm:h-56 md:h-64 lg:h-72 flex items-center justify-center text-gray-400 border-2 border-dashed border-orange-300 rounded-xl">
           📊 Chart will go here
         </div>
