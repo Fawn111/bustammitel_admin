@@ -6,8 +6,8 @@ const Topbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <header className="h-16 bg-gradient-to-br from-orange-700 via-orange-700 to-orange-800 shadow-md px-6 flex items-center justify-between">
-      <h1 className="text-white text-2xl font-extrabold tracking-wide font-secondary">
+    <header className="h-16 bg-gradient-to-br from-orange-700 via-orange-700 to-orange-800 shadow-md px-8 py-2 flex items-center justify-between">
+      <h1 className="text-white text-xl lg:text-xl font-extrabold tracking-wide font-secondary">
         Admin Dashboard
       </h1>
 
