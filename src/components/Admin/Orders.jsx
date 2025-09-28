@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import { motion } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [qrTexts, setQrTexts] = useState({}); // store qr text per order
 
-   const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const fetchOrders = async () => {
     try {
@@ -28,20 +29,19 @@ export default function Orders() {
   };
 
   const handleUpload = async (orderId) => {
-  const qrText = qrTexts[orderId];
-  if (!qrText || !qrText.trim()) return alert("Please enter text for QR code");
+    const qrText = qrTexts[orderId];
+    if (!qrText || !qrText.trim()) return alert("Please enter text for QR code");
 
-  try {
-    await axios.put(`${API_URL}/orders/${orderId}/qr`, {
-      qrText, // ✅ just send text
-    });
-    alert("QR code generated successfully!");
-    setQrTexts(prev => ({ ...prev, [orderId]: "" }));
-    fetchOrders();
-  } catch (err) {
-    console.error("Error updating QR code:", err.message);
-  }
-};
+    try {
+      await axios.put(`${API_URL}/orders/${orderId}/qr`, { qrText });
+      toast.success("QR code generated successfully!");
+      setQrTexts((prev) => ({ ...prev, [orderId]: "" }));
+      fetchOrders();
+    } catch (err) {
+      console.error("Error updating QR code:", err.message);
+      toast.error("Failed to update QR code!");
+    }
+  };
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -52,19 +52,21 @@ export default function Orders() {
       {/* Toast Notifications */}
       <ToastContainer position="top-right" autoClose={3000} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {orders.map((order) => (
-          <div
+          <motion.div
             key={order._id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.03 }}
+            transition={{ type: "spring", stiffness: 150 }}
             className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 p-5 flex flex-col justify-between border border-gray-200"
           >
             {/* User Info */}
             <div>
-              <h3 className="font-bold text-xl text-gray-800">
-                {order.username}
-              </h3>
+              <h3 className="font-bold text-xl text-gray-800">{order.username}</h3>
               <p className="text-sm text-gray-500">Order ID: {order._id}</p>
-              <div className="mt-1 flex items-center gap-2">
+              <div className="mt-1 flex flex-wrap gap-2">
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-semibold ${
                     order.status === "Pending"
@@ -86,12 +88,9 @@ export default function Orders() {
               <p className="text-gray-600">
                 {order.package?.title || order.package?.name}
               </p>
+              <p className="text-gray-500 text-sm">Data: {order.package?.data} GB</p>
               <p className="text-gray-500 text-sm">
-                Data: {order.package?.data} GB
-              </p>
-              <p className="text-gray-500 text-sm">
-                Validity: {order.package?.day}{" "}
-                {order.package?.day > 1 ? "Days" : "Day"}
+                Validity: {order.package?.day} {order.package?.day > 1 ? "Days" : "Day"}
               </p>
               <p className="text-gray-500 text-sm">
                 Type: {order.package?.type?.toUpperCase()}
@@ -108,9 +107,7 @@ export default function Orders() {
                 />
               )}
               <div>
-                <p className="text-gray-700 font-semibold">
-                  {order.operator?.title}
-                </p>
+                <p className="text-gray-700 font-semibold">{order.operator?.title}</p>
                 <p className="text-gray-500 text-sm">
                   {order.country?.title}
                   {order.region ? `, ${order.region?.title}` : ""}
@@ -121,8 +118,7 @@ export default function Orders() {
             {/* Payment & Coupon */}
             <div className="mt-4 text-gray-600 text-sm">
               <p>
-                <span className="font-semibold">Payment:</span>{" "}
-                {order.paymentMethod}
+                <span className="font-semibold">Payment:</span> {order.paymentMethod}
               </p>
               {order.coupon && (
                 <p>
@@ -160,7 +156,7 @@ export default function Orders() {
                 />
               </div>
             )}
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

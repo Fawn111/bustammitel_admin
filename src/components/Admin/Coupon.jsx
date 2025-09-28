@@ -16,7 +16,6 @@ const Coupon = () => {
   });
   const [search, setSearch] = useState("");
 
-  // Fetch all coupons
   const fetchCoupons = async () => {
     try {
       const res = await fetch(`${API_URL}/coupons`);
@@ -33,7 +32,6 @@ const Coupon = () => {
     fetchCoupons();
   }, []);
 
-  // Handle add/edit coupon
   const handleSave = async (e) => {
     e.preventDefault();
     try {
@@ -65,30 +63,27 @@ const Coupon = () => {
     }
   };
 
-  // Handle delete
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this coupon?")) return;
     try {
-      await fetch(`${API_URL}/coupon/${id}`, { method: "DELETE" });
+      await fetch(`${API_URL}/coupons/${id}`, { method: "DELETE" });
       setCoupons(coupons.filter((c) => c._id !== id));
     } catch (err) {
       console.error("Error deleting coupon:", err);
     }
   };
 
-  // Handle edit
   const handleEdit = (coupon) => {
     setEditingCoupon(coupon);
     setFormData({
       code: coupon.code,
       type: coupon.type,
       value: coupon.value,
-      expiryDate: coupon.expiryDate.split("T")[0], // format for input[type=date]
+      expiryDate: coupon.expiryDate.split("T")[0],
     });
     setIsModalOpen(true);
   };
 
-  // Filtered coupons by search
   const filteredCoupons = coupons.filter(
     (c) =>
       c.code.toLowerCase().includes(search.toLowerCase()) ||
@@ -98,9 +93,9 @@ const Coupon = () => {
   if (loading) return <p className="p-6 text-gray-600">Loading coupons...</p>;
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
           <FaTicketAlt className="text-orange-500" /> Coupons
         </h1>
@@ -117,7 +112,7 @@ const Coupon = () => {
       </div>
 
       {/* Search */}
-      <div className="mb-4">
+      <div className="mb-6">
         <input
           type="text"
           placeholder="Search by code or type..."
@@ -127,55 +122,49 @@ const Coupon = () => {
         />
       </div>
 
-      {/* Coupon Table */}
-      <div className="overflow-x-auto bg-white shadow-lg rounded-2xl border border-gray-200">
-        <table className="min-w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-orange-100 text-gray-800">
-              <th className="px-6 py-4 font-semibold">Code</th>
-              <th className="px-6 py-4 font-semibold">Type</th>
-              <th className="px-6 py-4 font-semibold">Discount</th>
-              <th className="px-6 py-4 font-semibold">Expiry</th>
-              <th className="px-6 py-4 font-semibold text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCoupons.map((c, idx) => (
-              <tr
-                key={c._id}
-                className={`border-b ${idx % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-orange-50 transition`}
-              >
-                <td className="px-6 py-3 font-medium text-gray-800">{c.code}</td>
-                <td className="px-6 py-3 text-gray-600">{c.type}</td>
-                <td className="px-6 py-3 text-gray-700">
+      {/* Coupon Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredCoupons.map((c) => (
+          <div
+            key={c._id}
+            className="bg-white rounded-2xl shadow-lg p-5 flex flex-col justify-between border border-gray-200 hover:shadow-2xl transition"
+          >
+            <div>
+              <h3 className="font-bold text-xl text-gray-800 mb-2">{c.code}</h3>
+              <p className="text-gray-600 mb-1">
+                Type: <span className="font-semibold">{c.type}</span>
+              </p>
+              <p className="text-gray-700 mb-1">
+                Discount:{" "}
+                <span className="font-semibold">
                   {c.type === "percentage" ? `${c.value}%` : `$${c.value}`}
-                </td>
-                <td className="px-6 py-3 text-gray-600">
-                  {new Date(c.expiryDate).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-3 flex gap-4 justify-center">
-                  <button
-                    onClick={() => handleEdit(c)}
-                    className="text-blue-600 hover:text-blue-800 transition"
-                  >
-                    <FaEdit size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(c._id)}
-                    className="text-red-600 hover:text-red-800 transition"
-                  >
-                    <FaTrash size={18} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </span>
+              </p>
+              <p className="text-gray-600 mb-2">
+                Expiry: <span className="font-semibold">{new Date(c.expiryDate).toLocaleDateString()}</span>
+              </p>
+            </div>
+            <div className="flex gap-3 mt-4 justify-end">
+              <button
+                onClick={() => handleEdit(c)}
+                className="text-blue-600 hover:text-blue-800 transition"
+              >
+                <FaEdit size={18} />
+              </button>
+              <button
+                onClick={() => handleDelete(c._id)}
+                className="text-red-600 hover:text-red-800 transition"
+              >
+                <FaTrash size={18} />
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Modal for Add/Edit */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-md z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50 p-4">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -249,7 +238,7 @@ const Coupon = () => {
                   />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4">
+                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}

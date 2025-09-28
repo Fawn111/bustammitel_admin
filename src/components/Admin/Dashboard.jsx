@@ -10,37 +10,60 @@ const Dashboard = () => {
     { title: "Active Coupons", value: "32", icon: <FaTicketAlt size={28} /> },
   ];
 
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
   return (
-    <div className="flex flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8 p-6 md:p-8 lg:p-12">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">
           Dashboard Overview
         </h1>
-        <p className="text-gray-600 mt-2">Welcome back, Admin 👋</p>
+        <p className="text-gray-600 mt-2 text-sm sm:text-base md:text-lg">Welcome back, Admin 👋</p>
       </div>
 
       {/* Stats Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
         {stats.map((stat, idx) => (
           <motion.div
             key={idx}
+            variants={cardVariants}
             whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-2xl shadow-lg cursor-pointer"
+            className="flex items-center gap-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 sm:p-6 md:p-6 rounded-2xl shadow-lg cursor-pointer"
           >
-            <div className="bg-white/20  p-4 rounded-full">{stat.icon}</div>
-            <div>
-              <h3 className="text-lg font-semibold">{stat.title}</h3>
-              <p className="text-2xl font-bold">{stat.value}</p>
+            <div className="bg-white/20 p-3 sm:p-4 rounded-full flex items-center justify-center">
+              {stat.icon}
+            </div>
+            <div className="flex flex-col">
+              <h3 className="text-sm sm:text-base md:text-lg font-semibold">{stat.title}</h3>
+              <p className="text-lg sm:text-xl md:text-2xl font-bold">{stat.value}</p>
             </div>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Placeholder for Charts */}
-      <div className="bg-white rounded-2xl shadow-lg p-6">
-        <h2 className="text-xl font-bold text-orange-600 mb-4">Analytics</h2>
-        <div className="h-48 flex items-center justify-center text-gray-400 border-2 border-dashed border-orange-300 rounded-xl">
+      <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-orange-600 mb-4">Analytics</h2>
+        <div className="h-48 sm:h-56 md:h-64 lg:h-72 flex items-center justify-center text-gray-400 border-2 border-dashed border-orange-300 rounded-xl">
           📊 Chart will go here
         </div>
       </div>
